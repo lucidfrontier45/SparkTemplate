@@ -19,7 +19,7 @@ object Job {
 
   def start(args: RunArgs): Unit = {
     val conf = new SparkConf()
-    conf.getOption("spark.app.name").getOrElse(conf.setAppName("SparkTemplate"))
+    conf.getOption("spark.app.name").getOrElse(conf.setAppName(appName))
     conf.getOption("spark.master").getOrElse(conf.setMaster("local[*]"))
     implicit val sc = new SparkContext(conf)
     mainTask(args)
