@@ -1,0 +1,51 @@
+group 'com.frontier45'
+version '1.0-SNAPSHOT'
+
+apply plugin: "java"
+apply plugin: "scala"
+apply plugin: "application"
+
+sourceCompatibility = 1.7
+
+
+configurations {
+    provided
+    compile {
+        extendsFrom provided
+    }
+}
+
+repositories {
+    maven { url "https://maven-central.storage.googleapis.com" }
+}
+
+ext {
+    versions = [
+            scala: '2.10.6',
+            spark: '1.5.2'
+    ]
+}
+
+dependencies {
+    compile 'com.github.scopt:scopt_2.10:3.3.0'
+    provided "org.apache.spark:spark-core_2.10:${versions.spark}"
+//    provided files("/opt/spark/lib/spark-assembly-${versions.spark}-hadoop2.6.0.jar")
+    compile "org.scala-lang:scala-library:${versions.scala}"
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task assembly(type: Jar) {
+    baseName = project.name + '-assembly'
+    from {
+        (configurations.runtime - configurations.provided).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+    with jar
+}
+
+run {
+    if (project.hasProperty('args')) {
+        args project.args.split('\\s+')
+    }
+}
